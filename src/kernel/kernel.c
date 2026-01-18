@@ -35,6 +35,14 @@ void syscall_echo(char c) {
     __asm__ volatile("int $0x80" : : "a"(c));
 }
 
+void print_with_syscall(char *c) {
+    char ch = *c++;
+    while(ch != '\0') {
+        syscall_echo(ch);
+        ch = *c++;
+    }
+}
+
 // Import the IDT initialization function
 extern void idt_init(); 
 
@@ -92,7 +100,11 @@ void kernel_low() {
 
     PRINT_EAX();
     
-    // syscall_echo('k');
+    syscall_echo('t');
+    syscall_echo('\n');
+    
+    char *c = "keimeno edw pera\n\0";
+    print_with_syscall(c);
     
     kprint("[LOW KERNEL] System active. Press keys to test Keyboard (IRQ 1).\n");
 
